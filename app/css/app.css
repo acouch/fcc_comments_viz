@@ -61,6 +61,7 @@
 position: absolute;
 height: auto;
 opacity: 1;
+width: 100%;
 }
 #tooltip .popover-title {
 font-weight: bold;
@@ -69,10 +70,19 @@ color: #FFF;
 white-space: nowrap;
 padding-right: 25px;
 }
+.popover-inner {
+  float: right;
+}
+#tooltip svg {
+  float: left;
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
 #tooltip button.close {
 position: absolute;
 top: 2px;
 right: 6px;
+font-size: 15px;
 }
 #tooltip .popover.right {
 display: block;

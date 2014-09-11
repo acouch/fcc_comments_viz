@@ -1,5 +1,12 @@
-<p>This is the partial for county 2.</p>
-<p>
-  Showing of 'interpolate' filter:
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+<h1>{{name}}</h1>
+<strong>{{count}}</strong> responses
+
+
+    <table ng-table class="table">
+    <tr ng-repeat="record in records">
+        <td data-title="'Applicant'">{{record.applicant}}</td>
+        <td data-title="'City'">{{record.city}}</td>
+        <td data-title="'Text'">{{record.text}}</td>
+
+    </tr>
+    </table>

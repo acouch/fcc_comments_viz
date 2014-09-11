@@ -5,10 +5,10 @@ angular.module('fccViz', [
   'fccViz.filters',
   'fccViz.services',
   'fccViz.directives',
+  'ngTable',
   'fccViz.controllers'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/county/:countyId', {templateUrl: 'partials/county.html', controller: 'CountyCtrl'});
   $routeProvider.otherwise({templateUrl: 'partials/home.html', controller: 'USAMapCtrl'});
-
 }]);

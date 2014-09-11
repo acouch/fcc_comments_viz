@@ -3,8 +3,9 @@
 	/* Controllers */
 
 angular.module('fccViz.controllers', [])
-  .controller('USAMapCtrl', ['$scope', function($scope) {
+  .controller('USAMapCtrl', ['$scope', 'githubService', 'countyName', function($scope, githubService, countyName) {
 
+	
 			var width = 960,
 			    height = 600;
 			var rateById = d3.map();
@@ -26,31 +27,28 @@ angular.module('fccViz.controllers', [])
 
 			queue()
 			    .defer(d3.json, "data/us.json")
-			    .defer(d3.tsv, "data/county_count.csv", function(d) { rateById.set(d.id, +d.rate); })
+			    .defer(d3.tsv, "data/county_count.csv", function(d) { rateById.set(d.id, + d.rate); })
 			    .await(ready);
 
-			 console.log(path);
 
-			function clicked(d) {
-
-				var bound = this.getBoundingClientRect();
-				var offset = bound.width;
-				var top = bound.top - 100;
+			 function popup(bound, offset, top, countyName, d, rate) {
+			 	var left = bound.left;
+			 	if (left > 850) {
+			 		left = 450 / left * left;
+			 	}
 			  
 				d3.select("#tooltip")
-					.style("left", (bound.left) + offset + "px")
+					.style("left", (left) + offset + "px")
 					.style("top", (top) + "px")
 					.style("display", "block")
-					.html('<div class="popover fade right in"><h3 class="popover-title">Title</h3><button onclick="this.parentNode.parentNode.style.display = \'none\';" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><div class="popover-content"></div></div>');
-				
-				var id = d.id;
-				d3.select(this)
-				  .attr('style', 'fill: red');
+					.html('<div class="popover fade right in"><button onclick="this.parentNode.parentNode.style.display = \'none\';" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><div class="popover-content"><div class="popover-inner"><h4>' + countyName + '</h4><strong>' + rate + '</strong> responses</div></div></div>');
 
 				var cpath = path(d);
 				var svgToolTip = d3.select("div#tooltip .popover-content").append("svg")
 						.attr("width", 100)
-			    	.attr("height", 100);;
+						.attr("class", function(e) { return quantize(rateById.get(d.id)); })
+			    	.attr("height", 100);
+
 					var gToolTip = svgToolTip.append("g");
 					gToolTip.append("path")
 						.attr('d', cpath);
@@ -66,10 +64,30 @@ angular.module('fccViz.controllers', [])
 			    gToolTip.transition()
 			     	.style("stroke-width", 1.5 / scale + "px")
 						.attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+			 }
+
+			function hover(d) {
+				var bound = this.getBoundingClientRect();
+				var offset = bound.width;
+				var top = bound.top - 100;
+				var rate = rateById.get(d.id);
+				var id = d.id;
+								d3.select(this)
+				  .attr('style', 'fill: red');
+
+				
+			 countyName.events(id)
+			    .success(function(data, status, headers) {
+				    angular.forEach(data.result.records[0], function(value, key) {
+					   if (key == ' County Name') {
+						   popup(bound, offset, top, value, d, rate);
+					   }
+						});
+				});
+			
 			}
 
 			function ready(error, us) {
-				console.log(path);
 
 			  svg.append("g")
 			      .attr("class", "counties")
@@ -79,7 +97,8 @@ angular.module('fccViz.controllers', [])
 			      .attr("class", function(d) { return quantize(rateById.get(d.id)); })
 			      .attr("county", function(d) { return d.id; })
 			      .attr("d", path)
-			      .on("mouseover", clicked)
+			      .on("mouseover", hover)
+			      .on("click", function (d) { window.location = '#/county/' + d.id;})
 					  .on("mouseleave", function(d) {
 			      	d3.select(this)
 			      		.transition()
@@ -96,6 +115,25 @@ angular.module('fccViz.controllers', [])
 
 
 	  }])
-  .controller('CountyCtrl', ['$scope', function($scope) {
-
+  .controller('CountyCtrl', ['$scope', '$routeParams', 'countyName', 'responses', function($scope, $routeParams, countyName, responses) {
+    countyName.events($routeParams.countyId)
+	    .success(function(data, status, headers) {
+		    angular.forEach(data.result.records[0], function(value, key) {
+			   if (key == ' County Name') {
+				   $scope.name = value;
+			   }
+			});
+		});
+	  d3.tsv("data/county_count.csv", function(data) {
+	  	data.map(function(county) {
+	  		if (county.id == $routeParams.countyId) {
+	  			$scope.count = county.rate;
+	  		}
+	  	});
+	  });
+	  responses.events($routeParams.countyId)
+	  	.success(function(data, status, headers) {
+	  		$scope.records = data.result.records;			
+		});
+			
   }]);
