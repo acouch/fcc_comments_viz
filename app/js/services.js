@@ -31,7 +31,7 @@ angular.module('fccViz.services', [])
     var doRequest = function(county) {
       return $http({
         method: 'JSONP',
-        url: 'http://usda-nal.local/api/action/datastore/search.jsonp?resource_id=d4383160-223d-40ad-b8b1-74c00fe6a419&limit=5&filters[county]=' + county + '&callback=JSON_CALLBACK'
+        url: 'http://test-fcc-comments.getnucivic.com/api/action/datastore/search.jsonp?resource_id=aba4778e-d303-4932-802f-109f807966e0&[county]=' + county + '&callback=JSON_CALLBACK'
       });
     }
     return {
