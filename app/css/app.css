@@ -57,11 +57,18 @@
 #usamap-container {
   position: relative;
 }
+.field-label {
+  display: none !important;
+}
 #tooltip {
 position: absolute;
 height: auto;
 opacity: 1;
 width: 100%;
+}
+#usamap {
+  overflow: hidden;
+position: relative;
 }
 #tooltip .popover-title {
 font-weight: bold;

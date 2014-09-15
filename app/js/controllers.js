@@ -31,29 +31,46 @@ angular.module('fccViz.controllers', [])
 			    .await(ready);
 
 
-			 function popup(bound, offset, top, countyName, d, rate) {
+			 function popup(bound, offset, top, data, rate) {
+				var id = data.id;
+
 			 	var left = bound.left;
 			 	if (left > 850) {
-			 		left = 450 / left * left;
+			 		left = left - 400;
 			 	}
 			  
 				d3.select("#tooltip")
 					.style("left", (left) + offset + "px")
 					.style("top", (top) + "px")
 					.style("display", "block")
-					.html('<div class="popover fade right in"><button onclick="this.parentNode.parentNode.style.display = \'none\';" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><div class="popover-content"><div class="popover-inner"><h4>' + countyName + '</h4><strong>' + rate + '</strong> responses</div></div></div>');
+					.html('<div class="popover fade right in"><button onclick="this.parentNode.parentNode.style.display = \'none\';" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><div class="popover-content"><div class="popover-inner"><h4><div id="county-name">loading...</div></h4><strong><span id="rate">loading...</span></strong> responses</div></div></div>');
 
-				var cpath = path(d);
+
+				 countyName.events(id)
+			    .success(function(data, status, headers) {
+				    angular.forEach(data.result.records[0], function(value, key) {
+					   if (key == ' County Name') {
+						   
+							d3.select("#county-name")
+								.html(value);
+							d3.select("#rate")
+								.html(rate);		
+
+					   }
+						});
+				});
+
+			  var cpath = path(data);
 				var svgToolTip = d3.select("div#tooltip .popover-content").append("svg")
 						.attr("width", 100)
-						.attr("class", function(e) { return quantize(rateById.get(d.id)); })
+						.attr("class", function(e) { return quantize(rateById.get(id)); })
 			    	.attr("height", 100);
 
 					var gToolTip = svgToolTip.append("g");
 					gToolTip.append("path")
 						.attr('d', cpath);
 
-					var bounds = path.bounds(d),
+					var bounds = path.bounds(data),
 				    dx = bounds[1][0] - bounds[0][0],
 			      dy = bounds[1][1] - bounds[0][1],
 			      x = (bounds[0][0] + bounds[1][0]) / 2,
@@ -63,27 +80,22 @@ angular.module('fccViz.controllers', [])
 
 			    gToolTip.transition()
 			     	.style("stroke-width", 1.5 / scale + "px")
+			     	.duration(1)
 						.attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+
+				
 			 }
 
 			function hover(d) {
+
 				var bound = this.getBoundingClientRect();
 				var offset = bound.width;
 				var top = bound.top - 100;
 				var rate = rateById.get(d.id);
-				var id = d.id;
-								d3.select(this)
+				d3.select(this)
 				  .attr('style', 'fill: red');
 
-				
-			 countyName.events(id)
-			    .success(function(data, status, headers) {
-				    angular.forEach(data.result.records[0], function(value, key) {
-					   if (key == ' County Name') {
-						   popup(bound, offset, top, value, d, rate);
-					   }
-						});
-				});
+				popup(bound, offset, top, d, rate);
 			
 			}
 
