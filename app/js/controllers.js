@@ -30,9 +30,8 @@ angular.module('fccViz.controllers', [])
 			    .defer(d3.tsv, "data/county_count.csv", function(d) { rateById.set(d.id, + d.rate); })
 			    .await(ready);
 
-
-			 function popup(bound, offset, top, data, rate) {
-				var id = data.id;
+			function popup(bound, offset, top, data, rate) {
+			 	var id = data.id;
 
 			 	var left = bound.left;
 			 	if (left > 850) {
@@ -49,15 +48,13 @@ angular.module('fccViz.controllers', [])
 				 countyName.events(id)
 			    .success(function(data, status, headers) {
 				    angular.forEach(data.result.records[0], function(value, key) {
-					   if (key == ' County Name') {
-						   
-							d3.select("#county-name")
-								.html(value);
-							d3.select("#rate")
-								.html(rate);		
-
-					   }
-						});
+				    	if (key == ' County Name') {
+				    		d3.select("#county-name")
+				    			.html(value);
+				    		d3.select("#rate")
+				    			.html(rate);		
+				    	}
+			    });
 				});
 
 			  var cpath = path(data);
@@ -88,9 +85,11 @@ angular.module('fccViz.controllers', [])
 
 			function hover(d) {
 
+        var mapBound = $("#usamap").offset();
+				var topBound = $(this).offset();
 				var bound = this.getBoundingClientRect();
 				var offset = bound.width;
-				var top = bound.top - 100;
+				var top =  topBound.top - mapBound.top  - 50;
 				var rate = rateById.get(d.id);
 				d3.select(this)
 				  .attr('style', 'fill: red');
