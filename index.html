@@ -2,17 +2,196 @@
 <head>
   <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
 
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
+<!-- Web fonts -->
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-541cd2f9624262b0"></script>
 
 </head>
 <body>
-<h1>Here is where we do stuff</h1>
+
+<div class="text-center fcc">
+  	<div class="container">
+		<img src="img/fcc-logo.png" title="Federal Communications Commission" alt="Federal Communications Commission">
+	</div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>Mapping FCC Open Internet comments</h1>
+
+	<div class="row">
+	  <div class="col-md-3"><p>&nbsp;</p></div>
+	  <div class="col-md-6">
+	  	<p>The following map highlights the number of respondents to the initial Federal Communications Commission public comment period on its proposed changes for net neutrality rules.</p>
+	  <div class="col-md-3"><p>&nbsp;</p></div>
+</div>
+	</div>
+  </div>
+</div>
+
+<div class="container map text-center">
+	<h2>Comments by U.S. county</h2>
+	<p>Hover to see each county or click to zoom into an individual state</p>
+
+	<img src="img/map.png">
+
+</div>
+
+<div class="number">
+	<div class="container">
+
+		<div class="row numbers">
+			<div class="col-ld-12">
+				<h2>The numbers</h2>
+			</div>
+		</div>
+
+		<div class="row numbers">
+			<div class="col-md-6 text-right">
+				Comment period
+			</div>
+			<div class="col-md-6 numbers2 text-left">
+				July 18 - September 15, 2014
+			</div>
+		</div>
+		<hr>
+		<div class="row numbers">
+			<div class="col-md-6 text-right">
+				# of comments
+			</div>
+			<div class="col-md-6 numbers2 text-left">
+				435,789*
+			</div>
+		</div>
+		<hr>
+		<div class="row numbers">
+			<div class="col-md-6 text-right">
+				# of counties with responses
+			</div>
+			<div class="col-md-6 numbers2 text-left">
+				2,876**
+			</div>
+		</div>
+		<hr>
+		<p>* represents number of comments that contained correct zip codes<br>
+			** out of 3,007</p>
+		<hr class="big">
+		<div class="row numbers">
+			<div class="col-lg-12">
+				<div class="row numbers">
+					<div class="col-lg-12">
+						<h2>Top 10 counties</h2>
+					</div>
+				</div>
+
+				<div class="row numbers">
+					<div class="col-lg-12">
+						<table class="table table-bordered table-striped">
+						<thead><tr><th>County</th><th>Responses</th></tr></thead>
+						<tbody>
+							<tr>
+								<td><a href="#county/6037">Los Angeles County, CA</a></td><td>19,196</td>
+							</tr>	
+								<tr>
+								<td><a href="#county/17031">Cook County, IL</a></td><td>10,027</td>
+							</tr>
+								<tr>
+								<td><a href="#county/53033">King County, WA</a></td><td>9023</td>
+							</tr>
+								<tr>
+								<td><a href="#county/36061">New York County, NY</a></td><td>6718</td>
+							</tr>
+							<tr>
+								<td><a href="#county/6075">San Francisco County, CA</a></td><td>5960</td>
+							</tr>
+							<tr>
+								<td><a href="#county/6073">San Diego County, CA</a></td><td>5935</td>
+							</tr>
+								<tr>
+								<td><a href="#county/6001">Alameda County, CA</a></td><td>5627</td>
+							</tr>
+							<tr>
+								<td><a href="#county/36047">King County, NY</a></td><td>5413</td>
+							</tr>
+							<tr>
+								<td><a href="#county/4013">Maricopa County, AZ</a></td><td>5313</td>
+							</tr>
+							<tr>
+								<td><a href="#county/25017">Middlesex, MA</a></td><td>4989</td>
+							</tr>
+						</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="">
+	<div class="container">
+		<div class="row numbers">
+			<div class="col-lg-12">
+				<h2>Data</h2>
+				<iframe width="700" height="400" src="http://test-fcc-comments.getnucivic.com/node/15/recline-embed" frameborder="0"></iframe>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="reading">
+	<div class="container">
+
+		<div class="row">
+	  		<div class="col-lg-12 reading-h2">
+				<h2>Recommended reading</h2>
+			</div>
+		</div>
+
+		<div class="row">
+	  		<div class="col-md-3 text-center">
+	  			<i class="fa fa-book fa-5"></i>
+			</div>
+	  		<div class="col-md-9">
+				<ul>
+					<li><a href="http://www.fcc.gov/blog/update-volume-open-internet-comments-submitted-fcc">An Update on the Volume of Open Internet Comments Submitted to the FCC</a></li>
+					<li><a href="http://www.fcc.gov/blog/additional-option-filing-open-internet-comments">An Additional Option for Filing Open Internet Comments</a></li>
+					<li><a href="http://www.fcc.gov/blog/fcc-makes-open-internet-comments-more-accessible-public">FCC Makes Open Internet Comments More Accessible to Public</a></li>
+					<li><a href="http://www.fcc.gov/blog/keeping-track-open-internet-comments-submitted-fcc">Keeping Track of the Open Internet Comments Submitted to the FCC</a></li>
+					<li><a href="http://www.fcc.gov/blog/fcc-makes-open-internet-comments-more-accessible-public">FCC Makes Open Internet Comments More Accessible to Public</a></li>
+				</ul>
+			</div>			
+		</div>
+
+	</div>
+</div>
+
+<div class="footer">
+  	<div class="container">
+  		<div class="col-md-6 text-center">
+	  		<p>Powered by</p>
+			<p><a href="http://nucivic.com/dkan"><img src="img/dkan.png" title="DKAN" alt="DKAN" class="dkan"></a></p>
+		</div>
+  		<div class="col-md-6 text-center">
+	  		<p>Built by</p>
+			<p><a href="http://nucivic.com/"><img src="img/nucivic.svg" title="NuCivic" alt="NuCivic"></a></p>
+		</div>		
+	</div>
+</div>
+
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-541cd2f9624262b0"></script>
+
 </body>
 </html>
