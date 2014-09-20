@@ -1,0 +1,85 @@
+body {
+	font-family: 'Open Sans', sans-serif !important;
+	-webkit-font-smoothing: antialiased;
+}
+a {
+	color: #D63234;
+}
+a:hover,
+a:focus {
+	color: #252525;
+	text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-family: 'Open Sans', sans-serif !important;
+	color: #D63234;
+}
+h1 {
+	padding-bottom: 1em;
+}
+.jumbotron {
+	background: #D63234 url("../img/jumbotron.") 50% 50%;
+	color: #fff;
+	text-align: center;
+}
+.jumbotron h1 {
+	color: #fff;
+	font-size: 250%;
+}
+.map {
+	padding-bottom: 2em;
+}
+.fcc, .reading {
+	background: #386889;
+	color: #fff;
+}
+.fcc a, .fcc a:visited, .fcc h2, .fcc h3, .reading a, .reading a:visited, .reading h2, .reading h3 {
+	color: #fff;
+}
+.reading {
+	margin-bottom: 3em;
+	margin-top: 2em;
+	padding-bottom: 2em;
+	padding-top: 2em;
+}
+.reading-h2 {
+	padding-bottom: 2em;
+}
+.fcc img {
+	max-width: 100px;
+	width: 100%;
+}
+.number {
+	background: #eee;
+	padding-bottom: 2em;
+	padding-top: 2em;
+}
+.numbers {
+	border-bottom: 1px;
+	font-size: 200%;
+	padding-bottom: .25em;
+}
+.numbers2 {
+	color: #D63234;
+	font-weight: bold;
+}
+.number hr {
+	border-top: 1px solid #fff;
+}
+.number hr.big {
+	border-top: 10px solid #D63234;
+	margin-bottom: 30;
+	margin-top: 40;
+}
+i.fa-5 {
+	font-size: 200px;
+}
+.footer img {
+	max-width: 150px;
+	padding-bottom: 3em;
+	padding-top: 1em;
+	width: 100%;
+}
+.footer img.dkan {
+	max-width: 100px;
+}
