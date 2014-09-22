@@ -18,7 +18,7 @@ h1 {
 	padding-bottom: 1em;
 }
 .jumbotron {
-	background: #D63234 url("../img/jumbotron.") 50% 50%;
+	background: #D63234 url("../img/map-bg.png") 50% 50%;
 	color: #fff;
 	text-align: center;
 }
@@ -29,11 +29,11 @@ h1 {
 .map {
 	padding-bottom: 2em;
 }
-.fcc, .reading {
-	background: #386889;
+.reading {
+	background: #252525;
 	color: #fff;
 }
-.fcc a, .fcc a:visited, .fcc h2, .fcc h3, .reading a, .reading a:visited, .reading h2, .reading h3 {
+.reading a, .reading a:visited, .reading h2, .reading h3 {
 	color: #fff;
 }
 .reading {
@@ -45,8 +45,12 @@ h1 {
 .reading-h2 {
 	padding-bottom: 2em;
 }
-.fcc img {
-	max-width: 100px;
+.header {
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+.header img {
+	max-width: 150px;
 	width: 100%;
 }
 .number {
@@ -72,7 +76,7 @@ h1 {
 	margin-top: 40;
 }
 i.fa-5 {
-	font-size: 200px;
+	font-size: 150px;
 }
 .footer img {
 	max-width: 150px;
