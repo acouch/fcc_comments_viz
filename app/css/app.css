@@ -108,7 +108,9 @@ max-width: inherit;
 #counties .active {
   fill: rgb(204, 168, 24);
 }
-
+h1 a{
+  color: #FFF;
+}
 #state-borders {
   fill: none;
   stroke: #fff;
@@ -120,4 +122,10 @@ max-width: inherit;
 .help {
   padding-top: 5px;
   font-size: .7em;
+}
+path {
+  cursor: -webkit-zoom-in;
+}
+path.active {
+  cursor: pointer;
 }

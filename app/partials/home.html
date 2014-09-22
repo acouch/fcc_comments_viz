@@ -1,3 +1,8 @@
+
+<div class="container map text-center">
+  <h2>Comments by U.S. county/state</h2>
+  <p>Hover to see each county or click to zoom into an individual state</p>
+
 <aside id="usamap-container">
 <p>
 The following map highlights the number of respondents to the initial FCC public comment period on its proposed <a href="http://www.fcc.gov/document/protecting-and-promoting-open-internet-nprm">changes</a> for net neutrality rules which have been cited as potentially <a href="http://www.theverge.com/2014/4/23/5644246/fcc-new-net-neutrality-rules-draft-coming-in-may">destroying net neutrality</a>.
@@ -8,54 +13,163 @@ The following data was <a href="http://www.fcc.gov/blog/fcc-makes-open-internet-
 </p><p>
 Approximately 446,667 items were made available by the FCC. The following represents 435,789 of those items which contained correct zip codes.
 <p>
-<h2>Comments by County</h2>
-<p>
-The following represents comments by US county. Hover to see each county or click to zoom into an individual state.</p>
-<div id="usamap"><div id="tooltip"></div></div>
+
+<div id="usamap">
+  <div id="map-menu">
+    <div class="btn-group">
+      <button id="by-number" type="button" class="btn btn-default active"  ng-click="byNumber()">By Number</button>
+      <button id="by-percent" type="button" class="btn btn-default"  ng-click="byPercent()">By Percent</button>
+    </div>
+  </div>
+<div id="tooltip"></div></div>
 
 
-<h2>By the numbers</h2>
-<p>People from 2876 out of 3,007 counties responded.</p>
-<p>The top ten counties by respsonse were:</p>
-<table class="table table-bordered table-striped">
-<thead><tr><th>County</th><th>Responses</th></tr></thead>
-<tbody>
-	<tr>
-		<td><a href="#county/6037">Los Angeles County, CA</a></td><td>19,196</td>
-	</tr>	
-		<tr>
-		<td><a href="#county/17031">Cook County, IL</a></td><td>10,027</td>
-	</tr>
-		<tr>
-		<td><a href="#county/53033">King County, WA</a></td><td>9023</td>
-	</tr>
-		<tr>
-		<td><a href="#county/36061">New York County, NY</a></td><td>6718</td>
-	</tr>
-	<tr>
-		<td><a href="#county/6075">San Francisco County, CA</a></td><td>5960</td>
-	</tr>
-	<tr>
-		<td><a href="#county/6073">San Diego County, CA</a></td><td>5935</td>
-	</tr>
-		<tr>
-		<td><a href="#county/6001">Alameda County, CA</a></td><td>5627</td>
-	</tr>
-	<tr>
-		<td><a href="#county/36047">King County, NY</a></td><td>5413</td>
-	</tr>
-	<tr>
-		<td><a href="#county/4013">Maricopa County, AZ</a></td><td>5313</td>
-	</tr>
-	<tr>
-		<td><a href="#county/25017">Middlesex, MA</a></td><td>4989</td>
-	</tr>
-</tbody>
-</table>
-<h3>Full Data</h3>
-<p>
-The full data can be found on our DKAN site: <a href="http://test-fcc-comments.getnucivic.com/dataset/fcc-comments">http://test-fcc-comments.getnucivic.com/dataset/fcc-comments</a>
-</p><p>
-Comments can be queried individually below:
-</p>
-</aside>
+</div>
+
+<div class="number">
+  <div class="container">
+
+    <div class="row numbers">
+      <div class="col-ld-12">
+        <h2>The numbers</h2>
+      </div>
+    </div>
+
+    <div class="row numbers">
+      <div class="col-md-6 text-right">
+        Comment period
+      </div>
+      <div class="col-md-6 numbers2 text-left">
+        July 18 - September 15, 2014
+      </div>
+    </div>
+    <hr>
+    <div class="row numbers">
+      <div class="col-md-6 text-right">
+        # of comments
+      </div>
+      <div class="col-md-6 numbers2 text-left">
+        435,789*
+      </div>
+    </div>
+    <hr>
+    <div class="row numbers">
+      <div class="col-md-6 text-right">
+        # of counties with responses
+      </div>
+      <div class="col-md-6 numbers2 text-left">
+        2,876**
+      </div>
+    </div>
+  </div>
+</div>
+    <hr>
+    <p>* represents number of comments that contained correct zip codes<br>
+      ** out of 3,007</p>
+    <hr class="big">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Top 10 counties</h2>
+          </div>
+        </div>
+
+        <div class="row ">
+          <div class="col-lg-12">
+            <table class="table table-bordered table-striped">
+            <thead><tr><th>County</th><th>Responses</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><a href="#county/6037">Los Angeles County, CA</a></td><td>19,196</td>
+              </tr>
+                <tr>
+                <td><a href="#county/17031">Cook County, IL</a></td><td>10,027</td>
+              </tr>
+                <tr>
+                <td><a href="#county/53033">King County, WA</a></td><td>9023</td>
+              </tr>
+                <tr>
+                <td><a href="#county/36061">New York County, NY</a></td><td>6718</td>
+              </tr>
+              <tr>
+                <td><a href="#county/6075">San Francisco County, CA</a></td><td>5960</td>
+              </tr>
+              <tr>
+                <td><a href="#county/6073">San Diego County, CA</a></td><td>5935</td>
+              </tr>
+                <tr>
+                <td><a href="#county/6001">Alameda County, CA</a></td><td>5627</td>
+              </tr>
+              <tr>
+                <td><a href="#county/36047">King County, NY</a></td><td>5413</td>
+              </tr>
+              <tr>
+                <td><a href="#county/4013">Maricopa County, AZ</a></td><td>5313</td>
+              </tr>
+              <tr>
+                <td><a href="#county/25017">Middlesex, MA</a></td><td>4989</td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="">
+  <div class="container">
+    <div class="row numbers">
+      <div class="col-lg-12">
+        <h2>Data</h2>
+        <iframe width="100%" height="600" src="http://test-fcc-comments.getnucivic.com/node/15/recline-embed" frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="reading">
+  <div class="container">
+
+    <div class="row">
+        <div class="col-lg-12 reading-h2">
+        <h2>Recommended reading</h2>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 text-center">
+          <i class="fa fa-bookmark fa-5"></i>
+      </div>
+        <div class="col-md-9">
+        <ul>
+          <li><a href="http://www.fcc.gov/blog/update-volume-open-internet-comments-submitted-fcc">An Update on the Volume of Open Internet Comments Submitted to the FCC</a></li>
+          <li><a href="http://www.fcc.gov/blog/additional-option-filing-open-internet-comments">An Additional Option for Filing Open Internet Comments</a></li>
+          <li><a href="http://www.fcc.gov/blog/fcc-makes-open-internet-comments-more-accessible-public">FCC Makes Open Internet Comments More Accessible to Public</a></li>
+          <li><a href="http://www.fcc.gov/blog/keeping-track-open-internet-comments-submitted-fcc">Keeping Track of the Open Internet Comments Submitted to the FCC</a></li>
+          <li><a href="http://www.fcc.gov/blog/fcc-makes-open-internet-comments-more-accessible-public">FCC Makes Open Internet Comments More Accessible to Public</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+    <div class="container">
+      <div class="col-md-6 text-center">
+        <p>Powered by</p>
+      <p><a href="http://nucivic.com/dkan"><img src="img/dkan.png" title="DKAN" alt="DKAN" class="dkan"></a></p>
+    </div>
+      <div class="col-md-6 text-center">
+        <p>Built by</p>
+      <p><a href="http://nucivic.com/"><img src="img/nucivic.svg" title="NuCivic" alt="NuCivic"></a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-541cd2f9624262b0"></script>
