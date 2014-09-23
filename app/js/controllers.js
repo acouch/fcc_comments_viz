@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('fccViz.controllers', [])
-  .controller('USAMapCtrl', ['$scope', 'githubService', 'countyName', function($scope, githubService, countyName) {
+angular.module('fccViz.controllers', ['ngTable'])
+  .controller('USAMapCtrl', ['$scope', 'ngTableParams', 'countyName', function($scope, ngTableParams, countyName) {
   var width = 960,
     height = 600,
     centered;
@@ -12,7 +12,7 @@ angular.module('fccViz.controllers', [])
     var rateRankById = d3.map();
 
     $scope.quantize = d3.scale.threshold()
-        .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 11000])
+        .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 20000])
         .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
     var projection = d3.geo.albersUsa()
@@ -102,7 +102,7 @@ angular.module('fccViz.controllers', [])
         }
       }
       else if (left > 800) {
-        left = left - 400;
+        left = left - 450;
       }
 
       d3.select("#tooltip")
@@ -161,7 +161,6 @@ angular.module('fccViz.controllers', [])
     }
 
     function ready(error, us) {
-      console.log(us);
 
       $scope.g.append("g")
         .attr("id", "states")
@@ -226,12 +225,29 @@ angular.module('fccViz.controllers', [])
           .duration(750)
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
           .style("stroke-width", 1.5 / k + "px");
-      }
+    }
 
-      d3.select(self.frameElement).style("height", height + "px");
+    d3.select(self.frameElement).style("height", height + "px");
+
+    // TODO: make it happen.
+    $scope.CountTable = new ngTableParams(
+        angular.extend({
+            page: 0,
+            count: 10,
+        },
+        {
+          total: 0,
+          getData: function($defer, params) {
+            countyCount.events($routeParams.countyId, params.page(), params.count(), $scope.query)
+              .success(function(data, status, headers) {
+                params.total(data.result.total);
+                $defer.resolve(data.result.records);
+              });
+          }
+    }));
 
   }])
-  .controller('CountyCtrl', ['$scope', '$routeParams', 'countyName', 'responses', function($scope, $routeParams, countyName, responses) {
+  .controller('CountyCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyName', 'responses', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyName, responses, ngTableParams) {
     countyName.events($routeParams.countyId)
       .success(function(data, status, headers) {
         angular.forEach(data.result.records[0], function(value, key) {
@@ -247,8 +263,35 @@ angular.module('fccViz.controllers', [])
         }
       });
     });
-    responses.events($routeParams.countyId)
-      .success(function(data, status, headers) {
-        $scope.records = data.result.records;
-      });
+
+    $scope.DkanTable = new ngTableParams(
+        angular.extend({
+            page: 0,
+            count: 10,
+            query: "",
+        },
+        $location.search()), {
+          total: 0, // length of data
+          getData: function($defer, params) {
+            var url = params.url();
+            url.query = url.query ? decodeURIComponent(url.query) : url.query;
+
+            if ($scope.query) {
+              url.query = $scope.query;
+            }
+            if (url.query && !$scope.query) {
+              $scope.query = url.query;
+            }
+           $location.search(url);
+            responses.events($routeParams.countyId, params.page(), params.count(), $scope.query)
+              .success(function(data, status, headers) {
+                params.total(data.result.total);
+                $scope.total = data.result.total;
+                $scope.limit = data.result.limit;
+
+                $defer.resolve(data.result.records);
+              });
+          }
+    });
+
   }]);
