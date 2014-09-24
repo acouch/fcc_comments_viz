@@ -20,7 +20,7 @@ angular.module('fccViz.services', [])
     var doRequest = function(sortColumn, sort, page, count, offset) {
       return $http({
         method: 'JSONP',
-        url: 'http://test-fcc-comments.getnucivic.com/api/action/datastore/search.jsonp?resource_id=' + resource_id + '&offset=' + page + '&limit=' + count + '&sort[' + sortColumn + ']=' + sort + '&callback=JSON_CALLBACK'
+        url: 'http://test-fcc-comments.getnucivic.com/api/action/datastore/search.jsonp?resource_id=' + resource_id + '&offset=' + page + '&limit=' + count + '&sort=' + sortColumn + ' ' + sort + '&callback=JSON_CALLBACK'
       });
     }
     return {

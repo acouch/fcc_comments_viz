@@ -1,0 +1,23 @@
+<div class="row">
+          <div class="col-lg-12">
+            <h2>Top Counties by Number of Comments</h2>
+          </div>
+        </div>
+    <table ng-table="CountTable" class="table table-bordered table-striped">
+    <tr ng-repeat="record in $data">
+        <td data-title="'County'"><a href="#county/{{record.countyid}}">{{record.countyname}}</a></td>
+        <td data-title="'Comments'">{{record.count}}</td>
+    </tr>
+    </table>
+
+    <div class="row">
+          <div class="col-lg-12">
+            <h2>Top Counties by Percent of Popluation</h2>
+          </div>
+        </div>
+    <table ng-table="PercentTable" class="table table-bordered table-striped">
+    <tr ng-repeat="record in $data">
+        <td data-title="'County'"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}">{{record.countyname}}</a></td>
+        <td data-title="'Percent'">{{record.percent}}</td>
+    </tr>
+    </table>

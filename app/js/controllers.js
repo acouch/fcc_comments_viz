@@ -1,7 +1,44 @@
 'use strict';
 
 angular.module('fccViz.controllers', ['ngTable'])
-  .controller('USAMapCtrl', ['$scope', 'ngTableParams', 'countyName', function($scope, ngTableParams, countyName) {
+  .controller('USAMapCtrl', ['$scope', 'ngTableParams', 'countyName', 'countyCount', function($scope, ngTableParams, countyName, countyCount) {
+
+    // TODO: make it happen.
+    $scope.CountTable = new ngTableParams({
+        page: 1,            // show first page
+        count: 10           // count per page
+        },
+        {
+          total: 0,
+          getData: function($defer, params) {
+            console.log(params);
+
+            countyCount.events('count', 'desc', params.page() - 1, params.count())
+              .success(function(data, status, headers) {
+                params.total(data.result.total);
+                $defer.resolve(data.result.records);
+              });
+          }
+    });
+        $scope.PercentTable = new ngTableParams({
+        page: 1,            // show first page
+        count: 10           // count per page
+        },
+        {
+          total: 0,
+          getData: function($defer, params) {
+            console.log(params);
+
+            countyCount.events('percent', 'desc', params.page() - 1, params.count())
+              .success(function(data, status, headers) {
+                console.log(data.result);
+                params.total(data.result.total);
+                $defer.resolve(data.result.records);
+              });
+          }
+    });
+    console.log($scope);
+
   var width = 960,
     height = 600,
     centered;
@@ -77,6 +114,18 @@ angular.module('fccViz.controllers', ['ngTable'])
     });
     $("#tooltip").hover(function(){
       $(this).toggle();
+    });
+    // This isn't working yet. Binds too late.
+    $(".county-link").hover(function() {
+      var id = $(this).attr('county-id');
+      var rate =  rateById.get(id) ? rateById.get(id) : 0;
+      var percent =  percentById.get(id) ? percentById.get(id) : 0;
+      var percentRank =  percentRankById.get(id) ? percentRankById.get(id) : 0;
+      var rateRank =  rateRankById.get(id) ? rateRankById.get(id) : 0;
+      var linkBound = $(this).offset();
+      var top =  linkBound.top - 50;
+
+      popup(countyBound.left, top, d, rate, percent, rateRank, percentRank);
     });
 
 
@@ -229,22 +278,6 @@ angular.module('fccViz.controllers', ['ngTable'])
 
     d3.select(self.frameElement).style("height", height + "px");
 
-    // TODO: make it happen.
-    $scope.CountTable = new ngTableParams(
-        angular.extend({
-            page: 0,
-            count: 10,
-        },
-        {
-          total: 0,
-          getData: function($defer, params) {
-            countyCount.events($routeParams.countyId, params.page(), params.count(), $scope.query)
-              .success(function(data, status, headers) {
-                params.total(data.result.total);
-                $defer.resolve(data.result.records);
-              });
-          }
-    }));
 
   }])
   .controller('CountyCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyName', 'responses', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyName, responses, ngTableParams) {
