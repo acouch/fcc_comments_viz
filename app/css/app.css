@@ -129,3 +129,39 @@ path {
 path.active {
   cursor: pointer;
 }
+.btn-group {
+  text-align: center;
+  width: 100%;
+}
+.btn-group>.btn, .btn-group-vertical>.btn {
+  float: none !important;
+}
+#percent-table {
+  display: none;
+}
+.chart div {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
+.chart div:hover {
+  opacity: .9;
+}
+#usamap svg {
+  margin: auto;
+}
+svg{
+  width: auto;
+  height: auto;
+}
+.ng-table-counts {
+  width: auto;
+}
+.ng-table-pagination {
+  float: left;
+  width: auto;
+  margin: 0;
+}

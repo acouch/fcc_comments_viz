@@ -1,23 +1,27 @@
+
 <div class="row">
           <div class="col-lg-12">
-            <h2>Top Counties by Number of Comments</h2>
+            <h2>Top Counties</h2>
           </div>
         </div>
-    <table ng-table="CountTable" class="table table-bordered table-striped">
+    <div class="btn-group">
+      <button id="count-by-number" type="button" class="btn btn-default active"  ng-click="ctyByNumber()">By Number</button>
+      <button id="count-by-percent" type="button" class="btn btn-default"  ng-click="ctyByPercent()">By Percent</button>
+    </div>
+    <p>
+    <div id="count-table">
+    <table id="count-table" ng-table="CountTable" class="table table-bordered table-striped">
     <tr ng-repeat="record in $data">
         <td data-title="'County'"><a href="#county/{{record.countyid}}">{{record.countyname}}</a></td>
-        <td data-title="'Comments'">{{record.count}}</td>
+        <td data-title="'Comments'"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}"><div class="chart"><div style="width: {{record.width}}px;">{{record.count}}</div></div></a></div></td>
     </tr>
     </table>
-
-    <div class="row">
-          <div class="col-lg-12">
-            <h2>Top Counties by Percent of Popluation</h2>
-          </div>
-        </div>
-    <table ng-table="PercentTable" class="table table-bordered table-striped">
+    </div>
+<div id="percent-table">
+    <table  ng-table="PercentTable" class="table table-bordered table-striped">
     <tr ng-repeat="record in $data">
         <td data-title="'County'"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}">{{record.countyname}}</a></td>
-        <td data-title="'Percent'">{{record.percent}}</td>
+        <td data-title="'Percent'"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}"><div class="chart"><div style="width: {{record.width}}px;">{{record.percent}}</div></div></a></div></td>
     </tr>
     </table>
+    </div>

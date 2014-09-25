@@ -3,54 +3,64 @@
 angular.module('fccViz.controllers', ['ngTable'])
   .controller('USAMapCtrl', ['$scope', 'ngTableParams', 'countyName', 'countyCount', function($scope, ngTableParams, countyName, countyCount) {
 
-    // TODO: make it happen.
-    $scope.CountTable = new ngTableParams({
-        page: 1,            // show first page
-        count: 10           // count per page
-        },
-        {
-          total: 0,
-          getData: function($defer, params) {
-            console.log(params);
+  var countWidth = $(window).width()
+  var countScale = d3.scale.linear()
+    .domain([0, 19000])
+    .range([10, countWidth * .66]);
+  var percentScale = d3.scale.linear()
+    .domain([0, .04])
+    .range([10, countWidth * .66]);
 
-            countyCount.events('count', 'desc', params.page() - 1, params.count())
-              .success(function(data, status, headers) {
-                params.total(data.result.total);
-                $defer.resolve(data.result.records);
-              });
-          }
-    });
-        $scope.PercentTable = new ngTableParams({
-        page: 1,            // show first page
-        count: 10           // count per page
-        },
-        {
-          total: 0,
-          getData: function($defer, params) {
-            console.log(params);
-
-            countyCount.events('percent', 'desc', params.page() - 1, params.count())
-              .success(function(data, status, headers) {
-                console.log(data.result);
-                params.total(data.result.total);
-                $defer.resolve(data.result.records);
-              });
-          }
-    });
-    console.log($scope);
+  $scope.CountTable = new ngTableParams({
+      page: 1,
+      count: 10
+    },
+    {
+    total: 2826,
+    getData: function($defer, params) {
+      countyCount.events('count', 'desc', params.page() - 1, params.count())
+        .success(function(data, status, headers) {
+          var results = data.result.records;
+          angular.forEach(results, function(value, key) {
+            value.width = d3.round(countScale(value.count));
+            results[key] = value;
+          });
+          $defer.resolve(results);
+        });
+      }
+  });
+  $scope.PercentTable = new ngTableParams({
+      page: 1,
+      count: 10
+    },
+   {
+    total: 2826,
+    getData: function($defer, params) {
+      countyCount.events('percent', 'desc', params.page() - 1, params.count())
+        .success(function(data, status, headers) {
+          params.total(data.result.total);
+          var results = data.result.records;
+            angular.forEach(results, function(value, key) {
+            value.width = d3.round(percentScale(value.percent));
+            results[key] = value;
+          });
+          $defer.resolve(results);
+        });
+    }
+  });
 
   var width = 960,
     height = 600,
     centered;
 
-    var rateById = d3.map();
-    var percentById = d3.map();
-    var percentRankById = d3.map();
-    var rateRankById = d3.map();
+  var rateById = d3.map();
+  var percentById = d3.map();
+  var percentRankById = d3.map();
+  var rateRankById = d3.map();
 
-    $scope.quantize = d3.scale.threshold()
-        .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 20000])
-        .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+  $scope.quantize = d3.scale.threshold()
+    .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 20000])
+    .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
     var projection = d3.geo.albersUsa()
         .scale(1280)
@@ -64,6 +74,22 @@ angular.module('fccViz.controllers', ['ngTable'])
         .attr("height", height);
 
     $scope.g = $scope.svg.append("g");
+
+    $scope.ctyByNumber = function() {
+            console.log('wtf');
+
+      $("#count-table").show();
+      $("#percent-table").hide();
+      $("#count-by-percent").removeClass("active");
+      $("#count-by-number").addClass("active");
+    }
+    $scope.ctyByPercent = function() {
+            console.log('wtf');
+      $("#count-table").hide();
+      $("#percent-table").show();
+      $("#count-by-percent").addClass("active");
+      $("#count-by-number").removeClass("active");
+    }
 
     $scope.byNumber = function() {
       $("#usamap svg").remove();
@@ -95,7 +121,7 @@ angular.module('fccViz.controllers', ['ngTable'])
 
       $scope.g = $scope.svg.append("g");
       $scope.quantize = d3.scale.threshold()
-        .domain([0.0001,0.0003,0.0005,0.0008,0.001,0.0024,0.0045,0.008,0.0413])
+        .domain([0.0001,0.0003,0.0009, 0.001,0.0024,0.0045,0.008,0.01])
         .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
       $scope.quantFunc = percentById;
@@ -289,13 +315,6 @@ angular.module('fccViz.controllers', ['ngTable'])
            }
       });
     });
-    d3.tsv("data/county_count.csv", function(data) {
-      data.map(function(county) {
-        if (county.id == $routeParams.countyId) {
-          $scope.count = county.rate;
-        }
-      });
-    });
 
     $scope.DkanTable = new ngTableParams(
         angular.extend({
@@ -326,5 +345,7 @@ angular.module('fccViz.controllers', ['ngTable'])
               });
           }
     });
+
+
 
   }]);
