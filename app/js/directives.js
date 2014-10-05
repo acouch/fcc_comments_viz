@@ -4,8 +4,31 @@
 
 
 angular.module('fccViz.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  }]);
+  directive('countyChoroMap', ['$window', function($window) {
+    console.log('stt');
+      return {
+        restrict: 'AE',
+        scope: {
+          height: '@',
+          width: '@'
+        },
+        template: '<svg height={{height}} width={{width}}></svg>',
+        link: function(scope, element, attr) {
+          console.log(element)
+
+          var w = angular.element($window);
+          scope.$watch(function () {
+           // scope.width = w.width();
+           // scope.height = w.height();
+          }, true);
+          w.bind('resize', function () {
+              scope.$apply();
+          });
+
+          var g = d3.select("svg").append("g");
+
+
+        }
+      }
+    }]
+  );

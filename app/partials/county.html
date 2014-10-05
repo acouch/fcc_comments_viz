@@ -1,18 +1,19 @@
+<div d3-choro-map="countyMap" height="900" width="500"></div>
+<div id="wtf"></div>
 <h1>{{name}}</h1>
 <strong>{{total}}</strong> responses
 <p>
-Showing {{limit}} results of {{total}}
-
-  <p>
-   <form class="navbar-form navbar-left" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" ng-model="query" placeholder="Search">
-        <button type="submit" class="btn btn-default" ng-click="DkanTable.reload()">Submit</button>
-      </form>
-    <table ng-table="DkanTable" class="table">
-    <tr ng-repeat="record in $data">
-        <td data-title="'Applicant'">{{record.applicant}}</td>
-        <td data-title="'City'">{{record.city}}</td>
-        <td data-title="'Text'">{{record.text}}</td>
-    </tr>
-    </table>
+  Showing {{limit}} results of {{total}}
+<p>
+<form class="navbar-form navbar-left" role="search">
+    <div class="form-group">
+      <input type="text" class="form-control" ng-model="query" placeholder="Search">
+    <button type="submit" class="btn btn-default" ng-click="DkanTable.reload()">Submit</button>
+  </form>
+<table ng-table="DkanTable" class="table">
+<tr ng-repeat="record in $data">
+    <td data-title="'Applicant'">{{record.applicant}}</td>
+    <td data-title="'City'">{{record.city}}</td>
+    <td data-title="'Text'">{{record.text}}</td>
+</tr>
+</table>
