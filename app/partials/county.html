@@ -1,10 +1,16 @@
-<div d3-choro-map="countyMap" height="900" width="500"></div>
-<div id="wtf"></div>
+<input type="text" ng-model="height" placeholder="height">
+<h1>height {{height}}!</h1>
+
+<input type="text" ng-model="width" placeholder="width">
+<h1>width {{width}}!</h1>
+
+<div d3-choro-map="countyMap"></div>
 <h1>{{name}}</h1>
 <strong>{{total}}</strong> responses
 <p>
   Showing {{limit}} results of {{total}}
 <p>
+
 <form class="navbar-form navbar-left" role="search">
     <div class="form-group">
       <input type="text" class="form-control" ng-model="query" placeholder="Search">
