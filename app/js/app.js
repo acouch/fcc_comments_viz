@@ -10,5 +10,6 @@ angular.module('fccViz', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/county/:countyId', {templateUrl: 'partials/county.html', controller: 'CountyCtrl'});
+  $routeProvider.when('/state/:stateId', {templateUrl: 'partials/county.html', controller: 'StateCtrl'});
   $routeProvider.otherwise({templateUrl: 'partials/home.html', controller: 'USAMapCtrl'});
 }]);
