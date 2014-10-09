@@ -527,9 +527,3 @@ function popup($scope, countyName, left, top, data, rate, percent, rateRank, per
     .duration(1)
         .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
 }
-
-//var stateByID {
-//}
-
-
-}
