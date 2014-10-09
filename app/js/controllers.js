@@ -14,6 +14,10 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     .domain([0, 70169])
     .range([20, countWidth * .66]);
 
+  $scope.transition = 750;
+  $scope.k = 5;
+
+
   d3.csv("data/state_count.csv", function(data) {
     var result = {};
     angular.forEach(data, function(value, key) {
@@ -119,7 +123,7 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     $("#count-by-number").removeClass("active");
   }
 
-  $scope = countyChoroMap($scope, countyName, width, height);
+  countyChoroMap($scope, countyName, width, height);
 
   $("#by-number").click(function(c) {
     $("#by-percent").removeClass("active");
@@ -140,14 +144,14 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     var linkBound = $(this).offset();
     var top =  linkBound.top - 50;
 
-    popup(countyBound.left, top, d, rate, percent, rateRank, percentRank);
+    popup($scope, countyBound.left, top, d, rate, percent, rateRank, percentRank);
   });
 
 
   d3.select(self.frameElement).style("height", height + "px");
 
 }])
-.controller('CountyCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyName', 'responses', 'd3ChoroMapParams', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyName, responses, d3ChoroMapParams, ngTableParams) {
+.controller('CountyCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyData', 'countyName', 'responses', 'd3ChoroMapParams', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyData, countyName, responses, d3ChoroMapParams, ngTableParams) {
   countyName.events($routeParams.countyId)
     .success(function(data, status, headers) {
       angular.forEach(data.result.records[0], function(value, key) {
@@ -157,14 +161,159 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     });
   });
 
-  $scope.countyMap = new d3ChoroMapParams({
-    height: 555,
-    width: 999,
+  countyData.events($routeParams.countyId)
+    .success(function(data, status, headers) {
+      angular.forEach(data.result.records[0], function(value, key) {
+        if (key == 'rate') {
+          $scope.rank = value;
+        }
+        else if (key == 'percent') {
+          $scope.percent = value;
+        }
+        else if (key == 'percent_rank') {
+          $scope.percent_rank = value;
+        }
+    });
+  });
+  var width = 660,
+    height = 300,
+    centered;
+
+  $scope.rateById = d3.map();
+  $scope.percentById = d3.map();
+  $scope.percentRankById = d3.map();
+  $scope.rateRankById = d3.map();
+
+  $scope.quantize = d3.scale.threshold()
+    .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 20000])
+    .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+
+  $scope.transition = 0;
+  $scope.k = 7;
+
+
+  var projection = d3.geo.albersUsa()
+    .scale(1280)
+    .translate([width / 2, height / 2]);
+
+  $scope.path = d3.geo.path()
+    .projection(projection);
+
+  $scope.svg = d3.select("div#usamap").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  $scope.g = $scope.svg.append("g");
+
+  var hash = window.location.hash.split('/');
+  var hashId = hash[2].split('?')
+  var countyId = hashId[0];
+
+  countyChoroMap($scope, countyName, width, height, countyId);
+
+  $scope.DkanTable = new ngTableParams(
+    angular.extend({
+      page: 0,
+      count: 10,
+      query: "",
+    },
+    $location.search()), {
+      total: 0, // length of data
+      getData: function($defer, params) {
+        var url = params.url();
+        url.query = url.query ? decodeURIComponent(url.query) : url.query;
+
+        if ($scope.query) {
+          url.query = $scope.query;
+        }
+        if (url.query && !$scope.query) {
+          $scope.query = url.query;
+        }
+       $location.search(url);
+        responses.events($routeParams.countyId, params.page(), params.count(), $scope.query)
+          .success(function(data, status, headers) {
+            params.total(data.result.total);
+            $scope.total = data.result.total;
+            $scope.limit = data.result.limit;
+
+            $defer.resolve(data.result.records);
+          });
+      }
   });
 
-}]);
 
-function countyChoroMap($scope, countyName, width, height) {
+}])
+.controller('StateCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyData', 'stateResponses', 'd3ChoroMapParams', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyData, stateResponses, d3ChoroMapParams, ngTableParams) {
+  $scope.name = 'state';
+
+  var width = 660,
+    height = 300,
+    centered;
+
+  $scope.rateById = d3.map();
+  $scope.percentById = d3.map();
+  $scope.percentRankById = d3.map();
+  $scope.rateRankById = d3.map();
+
+  $scope.quantize = d3.scale.threshold()
+    .domain([0, 5, 50, 100, 500, 1000, 3000, 5000, 20000])
+    .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+
+  $scope.transition = 0;
+  $scope.k = 7;
+
+  var projection = d3.geo.albersUsa()
+    .scale(1280)
+    .translate([width / 2, height / 2]);
+
+  $scope.path = d3.geo.path()
+    .projection(projection);
+
+  $scope.svg = d3.select("div#usamap").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  $scope.g = $scope.svg.append("g");
+
+  var hash = window.location.hash.split('/');
+  var hashId = hash[2].split('?')
+  var stateCd = hashId[0];
+
+  countyChoroMap($scope, null, width, height, null, stateCd);
+
+  $scope.DkanTable = new ngTableParams(
+    angular.extend({
+      page: 0,
+      count: 10,
+      query: "",
+    },
+    $location.search()), {
+      total: 0, // length of data
+      getData: function($defer, params) {
+        var url = params.url();
+        url.query = url.query ? decodeURIComponent(url.query) : url.query;
+
+        if ($scope.query) {
+          url.query = $scope.query;
+        }
+        if (url.query && !$scope.query) {
+          $scope.query = url.query;
+        }
+       $location.search(url);
+        stateResponses.events($routeParams.stateId, params.page(), params.count(), $scope.query)
+          .success(function(data, status, headers) {
+            params.total(data.result.total);
+            $scope.total = data.result.total;
+            $scope.limit = data.result.limit;
+
+            $defer.resolve(data.result.records);
+          });
+      }
+  });
+
+
+}]);
+function countyChoroMap($scope, countyName, width, height, countyId, stateId) {
   var centered;
 
   $scope.quantFunc = $scope.rateById;
@@ -172,13 +321,19 @@ function countyChoroMap($scope, countyName, width, height) {
     .defer(d3.json, "data/us.json")
     .await(ready);
 
-    $scope.us.defer(d3.csv, "data/county_data.csv", function(d) {
-      $scope.percentById.set(d.id, + d.percent);
-      $scope.rateById.set(d.id, + d.rate);
-      $scope.rateRankById.set(d.id, + d.rate_rank);
-      $scope.percentRankById.set(d.id, + d.percent_rank);
-    })
+  if (countyId) {
+    $scope.countyId = countyId;
+  }
+  if (stateId) {
+    $scope.stateId = stateId;
+  }
 
+  $scope.us.defer(d3.csv, "data/county_data.csv", function(d) {
+    $scope.percentById.set(d.id, + d.percent);
+    $scope.rateById.set(d.id, + d.rate);
+    $scope.rateRankById.set(d.id, + d.rate_rank);
+    $scope.percentRankById.set(d.id, + d.percent_rank);
+  })
 
   $scope.byNumber = function() {
     $("#usamap svg").remove();
@@ -228,19 +383,32 @@ function countyChoroMap($scope, countyName, width, height) {
       d3.select(this)
         .attr('style', 'fill: rgb(219, 87, 87)');
 
-      popup(countyName, countyBound.left, top, d, rate, percent, rateRank, percentRank);
+      popup($scope, countyName, countyBound.left, top, d, rate, percent, rateRank, percentRank);
   }
 
   function ready(error, us) {
+
+    if ($scope.stateId) {
+
+      var states = topojson.feature(us, us.objects.states).features;
+
+      var selectedState = states.filter(function(state) { if (state.id == $scope.stateId) {return county};});
+    }
 
     $scope.g.append("g")
       .attr("id", "states")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
         .enter().append("path")
+        .attr("state", function(d) { return d.id})
         .attr("d", $scope.path)
-        .on("click", stateClick);
+        .on("click", stateClick)
+        .call(function() {if (selectedState) { stateClick(selectedState[0]);}});
 
+    if ($scope.countyId) {
+        var counties = topojson.feature(us, us.objects.counties).features;
+        var selectedCounty = counties.filter(function(county) { if (county.id == countyId) {return county};});
+    }
     $scope.g.append("g")
       .attr("id", "counties")
       .selectAll("path")
@@ -256,7 +424,10 @@ function countyChoroMap($scope, countyName, width, height) {
             d3.select(this)
               .transition()
               .attr("style", "");
-          });
+          })
+          .call(function() {if (selectedCounty) { stateClick(selectedCounty[0]); }});
+
+
 
       $scope.g.append("path")
        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -280,7 +451,6 @@ function countyChoroMap($scope, countyName, width, height) {
       var centroid = $scope.path.centroid(d);
       x = centroid[0];
       y = centroid[1];
-      k = 5;
       centered = d;
     } else {
       x = width / 2;
@@ -291,18 +461,18 @@ function countyChoroMap($scope, countyName, width, height) {
     $("#usamap").addClass("zoomed");
 
     $scope.g.selectAll("path")
-      .classed("active", centered && function(d) { return d === centered; });
+      .classed("active", centered && function(d) { return d.id === centered.id; });
 
     $scope.g.transition()
-      .duration(750)
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-      .style("stroke-width", 1.5 / k + "px");
+      .duration($scope.transition)
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + $scope.k + ")translate(" + -x + "," + -y + ")")
+      .style("stroke-width", 1.5 / $scope.k + "px");
   }
 
   return $scope;
 }
 
-function popup(countyName, left, top, data, rate, percent, rateRank, percentRank) {
+function popup($scope, countyName, left, top, data, rate, percent, rateRank, percentRank) {
   var id = data.id;
 
   if ($("#usamap").hasClass("zoomed")) {
@@ -321,15 +491,17 @@ function popup(countyName, left, top, data, rate, percent, rateRank, percentRank
     .style("display", "block")
     .html('<div class="popover fade right in"><button onclick="this.parentNode.parentNode.style.display = \'none\';" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><div class="popover-content"><div class="popover-inner"><h4><div id="county-name">loading...</div></h4><strong><span id="rate">' + rate + '</span></strong> responses<br/><strong>' + rateRank + '</strong> rank by comment count</br><strong>' +  percent + '</strong>  % of population</br><strong>' + percentRank + '</strong> rank by % of population <p class="help">Click once to zoom.<br/>Click twice to see full results.</p></div></div></div>');
 
-  countyName.events(id)
-    .success(function(data, status, headers) {
-      angular.forEach(data.result.records[0], function(value, key) {
-        if (key == ' County Name') {
-          d3.select("#county-name")
-            .html(value);
-        }
+  if (countyName) {
+    countyName.events(id)
+      .success(function(data, status, headers) {
+        angular.forEach(data.result.records[0], function(value, key) {
+          if (key == ' County Name') {
+            d3.select("#county-name")
+              .html(value);
+          }
+      });
     });
-  });
+  }
 
   var cpath = $scope.path(data);
   var svgToolTip = d3.select("div#tooltip .popover-content").append("svg")
@@ -356,3 +528,8 @@ function popup(countyName, left, top, data, rate, percent, rateRank, percentRank
         .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
 }
 
+var stateByID {
+}
+
+
+}

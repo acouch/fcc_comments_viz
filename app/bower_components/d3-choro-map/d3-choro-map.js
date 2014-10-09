@@ -57,6 +57,11 @@ app.factory('d3ChoroMapParams', ['$q', function ($q) {
             return angular.isDefined(page) ? this.parameters({'page': page}) : params.page;
         };
 
+        this.filter = function (filter) {
+          return angular.isDefined(filter) ? this.parameters({'filter': filter}) : params.filter;
+        };
+
+
         this.total = function (total) {
             return angular.isDefined(total) ? this.settings({'total': total}) : settings.total;
         };
@@ -82,12 +87,12 @@ app.factory('d3ChoroMapParams', ['$q', function ($q) {
             $defer.promise.then(function (data) {
                 settings.$loading = false;
                 if (settings.groupBy) {
-                    self.data = settings.$scope.$groups = data;
+      //              self.data = settings.$scope.$groups = data;
                 } else {
-                    self.data = settings.$scope.$data = data;
+        //            self.data = settings.$scope.$data = data;
                 }
                 //settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
-                //settings.$scope.$emit('ngTableAfterReloadData');
+                //settings.$scope.$emit('d3ChoroMapReload');
             });
         };
 
@@ -121,6 +126,7 @@ app.factory('d3ChoroMapParams', ['$q', function ($q) {
 
         this.settings(baseSettings);
         this.parameters(baseParameters, true);
+        console.log(this);
         return this;
   };
   return d3ChoroMapParams;
@@ -129,9 +135,9 @@ app.factory('d3ChoroMapParams', ['$q', function ($q) {
 var d3ChoroMapController = ['$scope', 'd3ChoroMapParams', '$timeout', function ($scope, d3ChoroMapParams, $timeout) {
     $scope.$loading = false;
 
-   // if (!$scope.params) {
-   //     $scope.params = new d3ChoroMapParams();
-   // }
+    if (!$scope.params) {
+        $scope.params = new d3ChoroMapParams();
+   }
   //  $scope.params.settings().$scope = $scope;
 
     var delayFilter = (function () {
@@ -143,17 +149,19 @@ var d3ChoroMapController = ['$scope', 'd3ChoroMapParams', '$timeout', function (
     })();
 
     $scope.$watch('params.$params', function (newParams, oldParams) {
-
-    //    $scope.params.settings().$scope = $scope;
-
-//        if (!angular.equals(newParams.filter, oldParams.filter)) {
- //           delayFilter(function () {
- //               $scope.params.$params.page = 1;
- //               $scope.params.reload();
-//            }, $scope.params.settings().filterDelay);
-  //      } else {
-    //        $scope.params.reload();
-      //  }
+      //    $scope.params.settings().$scope = $scope;
+      if (!angular.equals(newParams.filter, oldParams.filter)) {
+        console.log('spload');
+        delayFilter(function () {
+          console.log('load');
+          $scope.params.$params.page = 1;
+          $scope.params.reload();
+        }, $scope.params.settings().filterDelay);
+      } else {
+        console.log('reload');
+        //$scope.params.reload();
+        $scope.params.$params.height = 111;
+      }
     }, true);
 
 }];
@@ -165,103 +173,98 @@ app.directive('d3ChoroMap', ['$compile', '$q', '$parse',
     return {
       restrict: 'AE',
       priority: 1001,
-      scope: true,
       controller: d3ChoroMapController,
       template: '<svg ng-attr-height="{{height}}" ng-attr-width="{{width}}"></svg>',
-      compile: function (element) {
-
+      compile: function (element, attr) {
 
 
         return function (scope, element, attrs) {
-          scope.$loading = false;
+
 
           scope.$watch(attrs.d3ChoroMap, (function (params) {
-          if (angular.isUndefined(params)) {
-              return;
-          }
-          scope.params = params;
-          console.log(params);
+            if (angular.isUndefined(params)) {
+                console.log(params);
+                return;
+            }
+            scope.params = params;
 
-          scope.height = params.$params.height;
-          scope.width = params.$params.width;
+            scope.height = params.$params.height;
+            scope.width = params.$params.width;
 
-          console.log(element);
+            console.log(element);
 
-          var height = params.$params.height;
-          var width = params.$params.width;
-          // TODO: Parameterize
-          var centered;
+            var height = params.$params.height;
+            var width = params.$params.width;
+            // TODO: Parameterize
+            var centered;
 
-          var projection = d3.geo.albersUsa()
-            .scale(1280)
-            .translate([width / 2, height / 2]);
+            var projection = d3.geo.albersUsa()
+              .scale(1280)
+              .translate([width / 2, height / 2]);
 
-          var path = d3.geo.path()
-            .projection(projection);
+            var path = d3.geo.path()
+              .projection(projection);
 
-          var svg = d3.select("div[d3-choro-map=" + attrs.d3ChoroMap + "] svg");
-            var g = svg.append("g");
+            var svg = d3.select("div[d3-choro-map=" + attrs.d3ChoroMap + "] svg");
+              var g = svg.append("g");
 
-          var us = queue()
-           .defer(d3.json, "data/us.json")
-           .await(ready);
+            var us = queue()
+             .defer(d3.json, "data/us.json")
+             .await(ready);
 
-          function ready(error, us) {
-            var counties = topojson.feature(us, us.objects.counties).features;
-            console.log(counties.filter(function(county) { if (county.id == '31011') {return county};}));
+            function ready(error, us) {
+              var counties = topojson.feature(us, us.objects.counties).features;
+              var selectedCounty = counties.filter(function(county) { if (county.id == '31011') {return county};});
 
-            g.append("g")
-              .attr("id", "states")
-              .selectAll("path")
-              .data(topojson.feature(us, us.objects.states).features)
-                .enter().append("path")
-                  .attr("d", path)
-                  .on("click", stateClick);
+              g.append("g")
+                .attr("id", "states")
+                .selectAll("path")
+                .data(topojson.feature(us, us.objects.states).features)
+                  .enter().append("path")
+                    .attr("d", path)
+                    .on("click", stateClick);
 
-            g.append("g")
-              .attr("id", "counties")
-              .selectAll("path")
-              .data(topojson.feature(us, us.objects.counties).features)
-                .enter().append("path")
-                  .attr("d", path)
-                  .attr("county", function(d) { return d.id; })
-                  .on("click", stateClick);
+              g.append("g")
+                .attr("id", "counties")
+                .selectAll("path")
+                .data(selectedCounty)
+                  .enter().append("path")
+                    .attr("d", path)
+                    .attr("county", function(d) { return d.id; })
+                    .on("click", stateClick);
 
-            g.append("path")
-             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-              .attr("id", "state-borders")
-              .attr("d", path);
-          }
-
-          function stateClick(d) {
-            console.log(d);
-            var x, y, k;
-
-            if (d && centered !== d) {
-              var centroid = path.centroid(d);
-              x = centroid[0];
-              y = centroid[1];
-              k = 5;
-              centered = d;
-            } else {
-              x = width / 2;
-              y = height / 2;
-              k = 1;
-              centered = null;
+              g.append("path")
+               .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+                .attr("id", "state-borders")
+                .attr("d", path);
             }
 
-            g.selectAll("path")
-              .classed("active", centered && function(d) { return d === centered; });
+            function stateClick(d) {
+              console.log(d);
+              var x, y, k;
 
-            g.transition()
-              .duration(750)
-              .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-              .style("stroke-width", 1.5 / k + "px");
-            }
-          }), true);
-          scope.parse = function (text) {
-              return angular.isDefined(text) ? text(scope) : '';
-          };
+              if (d && centered !== d) {
+                var centroid = path.centroid(d);
+                x = centroid[0];
+                y = centroid[1];
+                k = 5;
+                centered = d;
+              } else {
+                x = width / 2;
+                y = height / 2;
+                k = 1;
+                centered = null;
+              }
+
+              g.selectAll("path")
+                .classed("active", centered && function(d) { return d === centered; });
+
+              g.transition()
+                .duration(750)
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+                .style("stroke-width", 1.5 / k + "px");
+              }
+            }), true);
         };
       }
     }

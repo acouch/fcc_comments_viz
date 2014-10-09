@@ -1,10 +1,16 @@
-<div d3-choro-map="countyMap" height="900" width="500"></div>
-<div id="wtf"></div>
 <h1>{{name}}</h1>
-<strong>{{total}}</strong> responses
+<div id="usamap"></div>
+<p>
+  <strong>{{total}}</strong> responses</br>
+  <strong>{{rank}}</strong> rank by comment count</br>
+  <strong>{{percent}}%</strong>  of population</br>
+  <strong>{{percent_rank}}</strong>  rank by % of population</br>
+</p>
 <p>
   Showing {{limit}} results of {{total}}
 <p>
+
+
 <form class="navbar-form navbar-left" role="search">
     <div class="form-group">
       <input type="text" class="form-control" ng-model="query" placeholder="Search">
