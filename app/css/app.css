@@ -129,6 +129,13 @@ path {
 path.active {
   cursor: pointer;
 }
+body.state #states path {
+  opacity: .8;
+}
+body.state #states path.active {
+  display: none;
+}
+
 .btn-group {
   text-align: center;
   width: 100%;
@@ -165,4 +172,15 @@ svg{
   float: left;
   width: auto;
   margin: 0;
+}
+#results-containter {
+  float: left;
+  padding-right: 40px;
+  font-size: 1.5em;
+}
+#results-map-containter{
+  float: left;
+}
+.navbar-form {
+  padding-left: 0 !important;
 }

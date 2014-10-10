@@ -165,13 +165,18 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     .success(function(data, status, headers) {
       angular.forEach(data.result.records[0], function(value, key) {
         if (key == 'rate') {
-          $scope.rank = value;
+          console.log(key);
+          console.log(value);
+          $scope.responses = value;
         }
         else if (key == 'percent') {
           $scope.percent = value;
         }
         else if (key == 'percent_rank') {
           $scope.percent_rank = value;
+        }
+        else if (key == 'rate_rank') {
+          $scope.rank = value;
         }
     });
   });
@@ -244,9 +249,8 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
 
 }])
 .controller('StateCtrl', ['$scope', '$routeParams', '$location', '$filter', 'countyData', 'stateResponses', 'd3ChoroMapParams', 'ngTableParams', function($scope, $routeParams, $location, $filter, countyData, stateResponses, d3ChoroMapParams, ngTableParams) {
-  $scope.name = 'state';
 
-  var width = 660,
+  var width = 460,
     height = 300,
     centered;
 
@@ -260,7 +264,7 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
     .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
   $scope.transition = 0;
-  $scope.k = 7;
+  $scope.k = 2.95;
 
   var projection = d3.geo.albersUsa()
     .scale(1280)
@@ -293,13 +297,18 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
         var url = params.url();
         url.query = url.query ? decodeURIComponent(url.query) : url.query;
 
+        if (params.count() != 10 && params.page() != 0) {
+          $location.search(url);
+        }
+
         if ($scope.query) {
           url.query = $scope.query;
+          $location.search(url);
         }
         if (url.query && !$scope.query) {
           $scope.query = url.query;
         }
-       $location.search(url);
+
         stateResponses.events($routeParams.stateId, params.page(), params.count(), $scope.query)
           .success(function(data, status, headers) {
             params.total(data.result.total);
@@ -310,7 +319,6 @@ angular.module('fccViz.controllers', ['ngTable', 'd3ChoroMap'])
           });
       }
   });
-
 
 }]);
 function countyChoroMap($scope, countyName, width, height, countyId, stateId) {
@@ -389,13 +397,27 @@ function countyChoroMap($scope, countyName, width, height, countyId, stateId) {
   function ready(error, us) {
 
     if ($scope.stateId) {
-
       var states = topojson.feature(us, us.objects.states).features;
+      var stateNum = stateLookUp.filter(function(state) { if (state[2] == $scope.stateId) { return state[0];}});
+      var selectedState = states.filter(function(state) { if (state.id == stateNum[0][0]) {return true};});
+      $scope.name = stateNum[0][1];
 
-      var selectedState = states.filter(function(state) { if (state.id == $scope.stateId) {return county};});
+      if (stateNum[0][3]) {
+        $scope.k = stateNum[0][3];
+      }
+      if (stateNum[0][4]) {
+        width = stateNum[0][4];
+        $scope.svg.attr("width", stateNum[0][4]);
+      }
+      if (stateNum[0][5]) {
+        height = stateNum[0][5];
+        $scope.svg.attr("height", stateNum[0][5]);
+      }
+      $('body').addClass("state");
     }
 
-    $scope.g.append("g")
+    if (!($scope.stateId)) {
+      $scope.g.append("g")
       .attr("id", "states")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
@@ -404,11 +426,13 @@ function countyChoroMap($scope, countyName, width, height, countyId, stateId) {
         .attr("d", $scope.path)
         .on("click", stateClick)
         .call(function() {if (selectedState) { stateClick(selectedState[0]);}});
+    }
 
     if ($scope.countyId) {
-        var counties = topojson.feature(us, us.objects.counties).features;
-        var selectedCounty = counties.filter(function(county) { if (county.id == countyId) {return county};});
+      var counties = topojson.feature(us, us.objects.counties).features;
+      var selectedCounty = counties.filter(function(county) { if (county.id == countyId) {return county};});
     }
+
     $scope.g.append("g")
       .attr("id", "counties")
       .selectAll("path")
@@ -427,9 +451,20 @@ function countyChoroMap($scope, countyName, width, height, countyId, stateId) {
           })
           .call(function() {if (selectedCounty) { stateClick(selectedCounty[0]); }});
 
+  if ($scope.stateId) {
+      // Repeating here, not sure how else to reverse order for State page.
+      $scope.g.append("g")
+      .attr("id", "states")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+        .attr("state", function(d) { return d.id})
+        .attr("d", $scope.path)
+        .on("click", stateClick)
+        .call(function() {if (selectedState) { stateClick(selectedState[0]);}});
+    }
 
-
-      $scope.g.append("path")
+    $scope.g.append("path")
        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
         .attr("id", "state-borders")
         .attr("d", $scope.path);
@@ -527,3 +562,56 @@ function popup($scope, countyName, left, top, data, rate, percent, rateRank, per
     .duration(1)
         .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
 }
+
+var stateLookUp = [
+["1","Alabama","AL"],
+["2","Alaska","AK", "2.2"],
+["4","Arizona","AZ"],
+["5","Arkansas","AR"],
+["6","California","CA", "2", "300", "520"],
+["8","Colorado","CO"],
+["9","Connecticut","CT"],
+["10","Delaware","DE"],
+["12","Florida","FL","2.1", "570", "280"],
+["13","Georgia","GA"],
+["15","Hawaii","HI"],
+["16","Idaho","ID"],
+["17","Illinois","IL"],
+["18","Indiana","IN"],
+["19","Iowa","IA"],
+["20","Kansas","KS"],
+["21","Kentucky","KY"],
+["22","Louisiana","LA"],
+["23","Maine","ME"],
+["24","Maryland","MD"],
+["25","Massachusetts","MA"],
+["26","Michigan","MI"],
+["27","Minnesota","MN"],
+["28","Mississippi","MS"],
+["29","Missouri","MO"],
+["30","Montana","MT"],
+["31","Nebraska","NE"],
+["32","Nevada","NV"],
+["33","New Hampshire","NH"],
+["34","New Jersey","NJ"],
+["35","New Mexico","NM"],
+["36","New York","NY"],
+["37","North Carolina","NC"],
+["38","North Dakota","ND"],
+["39","Ohio","OH", "4"],
+["40","Oklahoma","OK"],
+["41","Oregon","OR"],
+["42","Pennsylvania","PA", "4"],
+["43","Rhode Island","RI"],
+["44","South Carolina","SC"],
+["45","South Dakota","SD"],
+["47","Tennessee","TN"],
+["48","Texas","TX","1.5", "360", "380"],
+["49","Utah","UT"],
+["50","Vermont","VT"],
+["51","Virginia","VA"],
+["53","Washington","WA"],
+["54","West Virginia","WV"],
+["55","Wisconsin","WI"],
+["56","Wyoming","WY"],
+];
