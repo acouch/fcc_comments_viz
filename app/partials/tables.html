@@ -9,11 +9,11 @@
   <button id="count-by-percent" type="button" class="btn btn-default"  ng-click="ctyByPercent()">By Percent</button>
 </div>
 <p>
-<div id="count-table">
+<div id="count-table-outer">
   <table id="count-table" ng-table="CountTable" class="table table-bordered table-striped">
     <tr ng-repeat="record in $data">
       <td data-title="'County'"><a href="#county/{{record.countyid}}">{{record.countyname}}</a></td>
-      <td data-title="'Comments'"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}"><div class="chart"><div style="width: {{record.width}}px;">{{record.count}}</div></div></a></div></td>
+      <td class="comment" data-title="Comments"><a county-id="{{record.countyid}}" class="county-link" href="#county/{{record.countyid}}"><div class="chart"><div style="width: {{record.width}}px;">{{record.count}}</div></div></a></div></td>
     </tr>
   </table>
 </div>

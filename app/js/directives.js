@@ -5,7 +5,6 @@
 
 angular.module('fccViz.directives', []).
   directive('countyChoroMap', ['$window', function($window) {
-    console.log('stt');
       return {
         restrict: 'AE',
         scope: {
@@ -18,8 +17,7 @@ angular.module('fccViz.directives', []).
 
           var w = angular.element($window);
           scope.$watch(function () {
-           // scope.width = w.width();
-           // scope.height = w.height();
+
           }, true);
           w.bind('resize', function () {
               scope.$apply();

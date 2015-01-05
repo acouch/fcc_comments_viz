@@ -87,3 +87,6 @@ i.fa-5 {
 .footer img.dkan {
 	max-width: 100px;
 }
+#results-map-container {
+  position: relative;
+}
